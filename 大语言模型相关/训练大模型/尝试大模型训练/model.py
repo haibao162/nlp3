@@ -28,6 +28,7 @@ class TorchModel(nn.Module):
         self.classify = nn.Linear(self.bert.config.hidden_size, class_num)
         self.crf_layer = CRF(class_num, batch_first=True)
         self.use_crf = config["use_crf"]
+        self.dropout = nn.Dropout(0.1)
         self.loss = torch.nn.CrossEntropyLoss(ignore_index=-1)  #loss采用交叉熵损失
 
     #当输入真实标签，返回loss值；无真实标签，返回预测值
@@ -35,6 +36,7 @@ class TorchModel(nn.Module):
         # x = self.embedding(x)  #input shape:(batch_size, sen_len)
         # x, _ = self.layer(x)      #input shape:(batch_size, sen_len, input_dim)
         x, _ = self.bert(x)
+        x = self.dropout(x)
         predict = self.classify(x) #ouput:(batch_size, sen_len, num_tags) -> (batch_size * sen_len, num_tags)
 
         if target is not None:
