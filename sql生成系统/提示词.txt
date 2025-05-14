@@ -1,0 +1,3 @@
+员工明细表插入数据，员工名称，业务名称，创建时间，帮我生成一条sql。员工明细表名为detail，字段如下：name：员工名称，bussiness：业务名称
+帮我查询没有签约的用户名称，生成对应的sql语句。数据库信息如下：签约表表名为SignTable，字段信息：isSign：是否签约，1：签约，0：未签约，外键为userId：用户id。为表Username的主键，表Username字段信息：主键userId: 用户id，name：用户名称。
+帮我查一下员工明细表有哪些字段，生成对应的sql语句？员工明细表名为detail，字段如下：name：员工名称，bussiness：业务名称

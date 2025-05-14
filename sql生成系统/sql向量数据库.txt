@@ -1,0 +1,2 @@
+表名：bf_no_order_advance_payment_form_normal_payment，备注：线下业务-垫付-黑名单。字段：id：主键，corp_id：企业ID，phone：手机号，create_time：创建时间，update_time：更新时间，remark：备注，create_by：创建人，update_by：更新人，del_flag：删除标志
+表名：

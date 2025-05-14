@@ -1,0 +1,26 @@
+[{
+    tableName: 'bf_no_order_advance_payment_form_normal_payment',
+    column: [{
+        id: 'name',
+        type: 'bigint(20) unsigned',
+    }],
+    'PRIMARY KEY': 'id',
+    desc: '表格名：字段名：id: min, name: 支付状态时间,',
+    relevant: [],
+},{
+    tableName: 'bf_no_order_advance_payment_form_normal_payment',
+    column: [{
+        id: 'name',
+        type: 'bigint(20) unsigned',
+    }],
+    'PRIMARY KEY': 'id',
+    desc: '表格名：字段名：id: min, name: 支付状态时间,'
+},{
+    tableName: 'bf_no_order_advance_payment_form_normal_payment',
+    column: [{
+        id: 'name',
+        type: 'bigint(20) unsigned',
+    }],
+    'PRIMARY KEY': 'id',
+    desc: '表格名：字段名：id: min, name: 支付状态时间,'
+}]
