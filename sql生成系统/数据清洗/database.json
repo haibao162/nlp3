@@ -1,0 +1,252 @@
+{
+  "bf_offline_payment_form": {
+    "columns": [
+      {
+        "corp_id": "企业ID"
+      },
+      {
+        "batch_no": "批次号"
+      },
+      {
+        "payment_form_no": "付款单编号"
+      },
+      {
+        "payment_type": "付款类型,1对公,2对私"
+      },
+      {
+        "apply_type": "申请类型,1常规业务,2垫付退回,3到款退回,4折扣单"
+      },
+      {
+        "category_parent_id": "业务大类ID"
+      },
+      {
+        "category_parent": "冗余业务大类"
+      },
+      {
+        "category_child_id": "业务小类ID"
+      },
+      {
+        "category_child": "冗余业务小类"
+      },
+      {
+        "amount": "请款金额"
+      },
+      {
+        "payer_bank_name": "付款银行名称"
+      },
+      {
+        "payer_bank_no": "付款银行卡号"
+      },
+      {
+        "payer_bank_ps": "支付附言"
+      },
+      {
+        "payee_bank_name": "收款银行名称"
+      },
+      {
+        "payee_bank_no": "收款银行卡号"
+      },
+      {
+        "payee_company_id": "收款方公司ID"
+      },
+      {
+        "payee_bank_account_name": "收款账户名"
+      },
+      {
+        "payee_company_name": "收款方公司名称"
+      },
+      {
+        "detail_count": "明细数量"
+      },
+      {
+        "remark": "付款单备注"
+      },
+      {
+        "audit_no": "审批单号"
+      },
+      {
+        "apply_audit_by": "提交审批人"
+      },
+      {
+        "apply_audit_account": "提交审批人账号"
+      },
+      {
+        "audit_template_id": "审批模版id"
+      },
+      {
+        "audit_terminal": "审批终端,1系统内审批,2钉钉端审批"
+      },
+      {
+        "audit_state": "付款审批状态,1待审批,2审批中,3审批通过,4审批被拒绝,5撤销,6作废"
+      },
+      {
+        "audit_time": "状态变更时间"
+      },
+      {
+        "audit_remark": "审批备注"
+      },
+      {
+        "audit_by": "状态变更人"
+      },
+      {
+        "audit_by_account": "状态变更人账号"
+      },
+      {
+        "audit_reason": "变更原因"
+      },
+      {
+        "adjust_enabled": "是否需要调整,0否,1是"
+      },
+      {
+        "adjust_by_account": "调整人账号"
+      },
+      {
+        "adjust_by": "调整人姓名"
+      },
+      {
+        "adjust_suggest": "调整建议"
+      },
+      {
+        "pay_no": "最新支付号"
+      },
+      {
+        "pay_remark": "最新支付备注"
+      },
+      {
+        "pay_state": "最新支付状态,1待支付,2支付中,3已支付(部分成功),4已经支付(全部成功),5已支付(全部失败),6未支付被驳回,7支付成功后被退回"
+      },
+      {
+        "paying_amount": "支付中金额"
+      },
+      {
+        "pay_unback_amount": "实付(未退回)"
+      },
+      {
+        "pay_back_amount": "实付(被退回)"
+      },
+      {
+        "pay_remain_amount": "剩余可支付"
+      },
+      {
+        "pay_negative_amount": "已负冲金额"
+      },
+      {
+        "pay_canceled_amount": "已取消金额"
+      },
+      {
+        "update_time": "更新时间"
+      },
+      {
+        "update_by": "修改人"
+      },
+      {
+        "update_by_name": "修改人名字"
+      },
+      {
+        "create_time": "创建时间"
+      },
+      {
+        "create_by": "创建人"
+      },
+      {
+        "create_by_name": "创建人名字"
+      },
+      {
+        "is_deleted": "删除状态,0未删除,1已删除"
+      },
+      {
+        "trace_id": "traceId"
+      },
+      {
+        "version": "乐观锁版本号"
+      }
+    ],
+    "tableComment": "线下业务-付款单"
+  },
+  "bf_no_order_advance_payment_form_normal_payment": {
+    "columns": [
+      {
+        "corp_id": "企业ID"
+      },
+      {
+        "payment_form_id": "付款单ID"
+      },
+      {
+        "form_pay_type": "付款单支付方式,1普通支付"
+      },
+      {
+        "order_type": "订单类型,1正常订单"
+      },
+      {
+        "detail_no": "明细单号"
+      },
+      {
+        "project_id": "项目ID"
+      },
+      {
+        "project_name": "项目名称"
+      },
+      {
+        "customer_id": "客户ID"
+      },
+      {
+        "customer_name": "客户名称"
+      },
+      {
+        "expenses_parent_id": "费用大类ID"
+      },
+      {
+        "expenses_parent": "冗余费用大类名称"
+      },
+      {
+        "expenses_child_id": "费用小类ID"
+      },
+      {
+        "expenses_child": "冗余费用小类名称"
+      },
+      {
+        "amount": "金额"
+      },
+      {
+        "pay_no": "最新支付号"
+      },
+      {
+        "pay_state": "最新支付状态,1待支付,2支付中,3已支付(部分成功),4已经支付(全部成功),5已支付(全部失败),6未支付被驳回,7支付成功后被退回,8已取消"
+      },
+      {
+        "pay_time": "支付状态时间"
+      },
+      {
+        "pay_state_reason": "支付状态原因"
+      },
+      {
+        "update_time": "更新时间"
+      },
+      {
+        "update_by": "修改人"
+      },
+      {
+        "update_by_name": "修改人名字"
+      },
+      {
+        "create_time": "创建时间"
+      },
+      {
+        "create_by": "创建人"
+      },
+      {
+        "create_by_name": "创建人名字"
+      },
+      {
+        "is_deleted": "删除状态,0未删除,1已删除"
+      },
+      {
+        "trace_id": "traceId"
+      },
+      {
+        "version": "乐观锁版本号"
+      }
+    ],
+    "tableComment": null
+  }
+}
