@@ -32,19 +32,23 @@ def clean_data(path):
                             columnList.append({
                                 column: comment
                             })
+                    elif re.search(r'PRIMARY KEY', text) is not None:
+                        primary_key = re.search(r'`(.)+`', text).group(0).replace('`', '')
+                        columnList.insert(0, { primary_key: '主键' + primary_key})
+                        # print(primary_key, 'primary_key')
                     else:
-                        tableComment = re.search(r'COMMENT=\'(.)+\';', text)
-                        if tableComment != None:
-                            tableComment = tableComment.group(0).replace('COMMENT=', '').replace('\'', '').replace(';', '')
+                        table_coment = re.search(r'COMMENT=\'(.)+\';', text)
+                        if table_coment != None:
+                            tableComment = table_coment.group(0).replace('COMMENT=', '').replace('\'', '').replace(';', '')
 
             result[tableName] = {}
             result[tableName]['columns'] = columnList
-            result[tableName]['tableComment'] = tableComment
+            result[tableName]['table_comment'] = tableComment
 
     with open('database.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
         f.close()
-    print(result)
+    # print(result)
             
 
 

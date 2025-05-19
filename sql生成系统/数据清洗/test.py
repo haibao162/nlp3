@@ -27,10 +27,19 @@ createTable = re.search(r'CREATE TABLE `(.)+`', table)
 print(createTable.group(0))
 
 table = ") ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='无订单垫付-付款单-无订单常规请款缴费-明细';"
+table = ") ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='无订单垫付-付款单-无订单常规请款缴费-明细';"
 comment = re.search(r'COMMENT=\'(.)+\'', table)
+print(comment, 'search comment')
+
 comment = re.finditer(r'`(.)+`(.)+COMMENT \'(.)+\'', table)
 match = list(comment)
 print(len(match), comment)
+
+a = [{"x": 1}, {"y": 4}]
+my_dict = {'banana': 3, 'apple': 1, 'pear': 2}
+for k in my_dict.items():
+    print(k[0])
+    # print(list(k.keys())[0])
 
 
 

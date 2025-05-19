@@ -1,47 +1,14 @@
-员工明细表插入数据，员工名称是张三，业务名称外包，创建时间是2025-5-18，帮我生成一条sql。
-员工明细表detail，字段信息：name：员工名称，bussiness：业务名称， createTime：创建时间。
+# https://bailian.console.aliyun.com/?tab=model#/api-key
 
-帮我查一下员工明细表有哪些字段，生成对应的sql语句
-员工明细表名为detail，字段如下：name：员工名称，bussiness：业务名称
+# sk-d6ea04034e9743e8991a7dbb8fe5c11b
 
-帮我查询没有签约的用户名称，生成对应的sql语句。
-数据库信息如下：表SignTable字段信息：isSign：是否签约，1：签约，0：未签约，id：用户id。表SignTable和表Username关联字段有：SignTable.id=Username.userId，表Username字段信息：userId: 用户id，name：用户名称。
+# pip install openai -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-帮我查询订单审核状态为待审核的所有信息，生成对应的sql语句。
-数据库信息如下：表SignTable字段信息：isSign：是否签约，1：签约，0：未签约，id：用户id，order_status：订单状态，1：待付款，2：已付款，3：已发货，4：已收货，auditStatus：订单审核状态，1、待审核，2：已通过，3：已拒绝，4：已关闭。
+import os
+from openai import OpenAI
 
-
-查询付款单 ID 为 20230313001 的付款单银行卡卡号和垫款退回明细中的客户名称
-
-SELECT 
-    p.payer_bank_no AS 付款银行卡号,
-    d.customer_name AS 客户名称
-FROM 
-    bf_offline_payment_form p
-JOIN 
-    bf_offline_payment_form_advance_back_detail d 
-ON 
-    p.id = d.payment_form_id
-WHERE 
-    p.id = '20230313001'  -- 付款单ID
-    AND p.is_deleted = 0   -- 过滤未删除的记录
-    AND d.is_deleted = 0;  -- 过滤未删除的记录
-
-
-SELECT 
-    p.payer_bank_no AS 付款单银行卡卡号,
-    d.customer_name AS 垫款退回客户名称
-FROM 
-    bf_offline_payment_form_advance_back_detail d
-INNER JOIN 
-    bf_offline_payment_form p
-ON 
-    d.payment_form_id = p.id
-WHERE 
-    d.payment_form_id = '20230313001';
-    
-
-根据垫款退回-明细中的付款单ID=20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称，生成对应的sql语句。数据库信息如下：
+str = """
+根据垫款退回-明细中付款单ID等于20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称，生成对应的sql语句。数据库信息如下：
 bf_offline_payment_form 线下业务-付款单表表名是bf_offline_payment_form，
 字段信息有：id：主键id，corp_id：企业ID，batch_no：批次号，payment_form_no：付款单编号，payment_type：付款类型,1对公,2对私，
 apply_type：申请类型,1常规业务,2垫付退回,3到款退回,4折扣单，category_parent_id：业务大类ID，category_parent：冗余业务大类，
@@ -92,8 +59,6 @@ create_time：创建时间，create_by：创建人，create_by_name：创建人�
 version：乐观锁版本号。
 表bf_offline_payment_form和表bf_offline_payment_form_advance_back_detail关联字段有：
 bf_offline_payment_form.id = bf_offline_payment_form_advance_back_detail.payment_form_id，
-表bf_offline_payment_form_advance_back_detail和表bf_offline_payment_form关联字段有：
-bf_offline_payment_form_advance_back_detail.payment_form_id = bf_offline_payment_form.id，
 线下业务-付款单-垫款退回-明细表表名是bf_offline_payment_form_advance_back_detail，
 字段信息有：corp_id：企业ID，payment_form_id：付款单ID，form_pay_type：付款单支付方式,1普通支付,2被负冲,3负冲，
 advance_no：垫款单编号，project_id：项目ID，project_name：项目名称，customer_id：客户ID，customer_name：客户名称，
@@ -130,3 +95,19 @@ bf_offline_payment_form.id = bf_offline_payment_form_pay_detail.payment_form_id�
 detail_type：记录类型,1申请支付,2被退回,3被负冲-负冲，data_json：数据json格式，data_json_version：数据json格式版本号，
 update_time：更新时间，update_by：修改人，update_by_name：修改人名字，create_time：创建时间，create_by：创建人，
 create_by_name：创建人名字，is_deleted：删除状态,0未删除,1已删除，trace_id：traceId，version：乐观锁版本号。
+"""
+
+client = OpenAI(
+    # 若没有配置环境变量，请用百炼API Key将下行替换为：api_key="sk-xxx",
+    api_key= 'sk-d6ea04034e9743e8991a7dbb8fe5c11b' or os.getenv("DASHSCOPE_API_KEY"), # 如何获取API Key：https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
+
+completion = client.chat.completions.create(
+    model="qwen-plus", # 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
+    messages=[
+        {'role': 'user', 'content': str},
+        # {'role': 'user', 'content': '你是谁？'}
+        ]
+)
+print(completion.choices[0].message.content)
