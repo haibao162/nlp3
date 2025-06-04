@@ -16,11 +16,23 @@ def getTableInfo(table_name, table_data):
     result = db_info + '，'.join(column_info) + '。'
     return result
 
+def getTableComment(table_name, table_data):
+    result = ''
+    db_info = table_data['table_comment'] + '表' + '，' + '字段信息有：'
+    column_info = []
+    for field in table_data['columns']:
+        field_data = list(field.values())[0]
+        column_info.append(field_data)
+    result = db_info + '、'.join(column_info) + '。'
+    return result
+
 
 def load_data(path):
     # 加载数据
     data = ''
-    db_main_sentences = {} # 单独记录每张表里面有哪些字段，用于BM25、向量数据库匹配
+    db_main_sentences = {} # 单独记录每张表里面有哪些字段和字段的COMMENT，用于BM25匹配
+    db_main_sentences_comment = {} # 单独记录每张表里面有哪些字段，只包含COMMENT，用于和向量数据库匹配
+
     db_revelant_sentences = {} # 单独记录表和其它表的关联关系
 
     db_tables = []
@@ -29,7 +41,9 @@ def load_data(path):
     # print(data.items())
     for (table_name, table_data) in data.items():
         result = getTableInfo(table_name, table_data)
+        comments = getTableComment(table_name, table_data) # 获取注释
         db_main_sentences[table_name] = result
+        db_main_sentences_comment[table_name] = comments
         db_tables.append(table_name)
         # 线下业务-付款单-付款记录表表名是bf_offline_payment_form_pay_detail，字段信息有：
         # corp_id：企业ID，payment_form_id：付款单ID，payment_form_no：付款单号，pay_no：支付单号，
@@ -65,9 +79,10 @@ def load_data(path):
     # for (table_name, table_data) in db_main_sentences.items():
     #     print(table_name, table_data)
     # 返回所有表的信息
-    return db_main_sentences, db_revelant_sentences
+    # print(db_main_sentences_comment, 'db_main_sentences_comment')
+    return db_main_sentences, db_revelant_sentences, db_main_sentences_comment
 
 
 if __name__ == '__main__':
-    path = './database.json'
-    load_data(path)
+    path = 'database.json'
+    db_main_sentences, db_revelant_sentences, db_main_sentences_comment = load_data(path)

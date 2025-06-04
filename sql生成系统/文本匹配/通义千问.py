@@ -7,8 +7,16 @@
 import os
 from openai import OpenAI
 
-str = """
-根据垫款退回-明细中付款单ID等于20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称，生成对应的sql语句。数据库信息如下：
+query = """
+根据垫款退回-明细中付款单ID等于20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称，生成对应的sql语句。
+"""
+
+query = """
+根据线下-付款类型为对私的类型，查询所有付款单审批单号。生成对应的sql语句。
+"""
+
+answer = """
+数据库信息如下：
 bf_offline_payment_form 线下业务-付款单表表名是bf_offline_payment_form，
 字段信息有：id：主键id，corp_id：企业ID，batch_no：批次号，payment_form_no：付款单编号，payment_type：付款类型,1对公,2对私，
 apply_type：申请类型,1常规业务,2垫付退回,3到款退回,4折扣单，category_parent_id：业务大类ID，category_parent：冗余业务大类，
@@ -94,8 +102,9 @@ bf_offline_payment_form.id = bf_offline_payment_form_pay_detail.payment_form_id�
 字段信息有：corp_id：企业ID，payment_form_id：付款单ID，payment_form_no：付款单号，pay_no：支付单号，
 detail_type：记录类型,1申请支付,2被退回,3被负冲-负冲，data_json：数据json格式，data_json_version：数据json格式版本号，
 update_time：更新时间，update_by：修改人，update_by_name：修改人名字，create_time：创建时间，create_by：创建人，
-create_by_name：创建人名字，is_deleted：删除状态,0未删除,1已删除，trace_id：traceId，version：乐观锁版本号。
-"""
+create_by_name：创建人名字，is_deleted：删除状态,0未删除,1已删除，trace_id：traceId，version：乐观锁版本号。"""
+
+# 6486
 
 client = OpenAI(
     # 若没有配置环境变量，请用百炼API Key将下行替换为：api_key="sk-xxx",
@@ -106,8 +115,23 @@ client = OpenAI(
 completion = client.chat.completions.create(
     model="qwen-plus", # 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
     messages=[
-        {'role': 'user', 'content': str},
-        # {'role': 'user', 'content': '你是谁？'}
+        {'role': 'user', 'content': query},
+        {'role': 'system', 'content': answer }
         ]
 )
 print(completion.choices[0].message.content)
+
+
+# ```sql
+# SELECT 
+#     opf.payer_bank_no AS 银行卡卡号, 
+#     abd.customer_name AS 客户名称
+# FROM 
+#     bf_offline_payment_form opf
+# LEFT JOIN 
+#     bf_offline_payment_form_advance_back_detail abd 
+# ON 
+#     opf.id = abd.payment_form_id
+# WHERE 
+#     opf.id = '20230313001';
+# ```

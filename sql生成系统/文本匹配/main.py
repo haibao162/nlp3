@@ -1,76 +1,64 @@
+from bm25_recall import BM25Recall
+from config import Config
 from loader import load_data
-import jieba
-from BM25 import BM25
+from sentence_transformers import SentenceTransformer, util
+from RAG import getAnswer
 
-k = 5 # BM25算法召回的前k个数量
+vector_path = Config['vector_path']
+model_path = Config['model_path']
+# all-RoBERTa-Large-v1
+model = SentenceTransformer(model_path) # 如果需要区分肯定/否定，需要训练。生成sql语句的话，如果不考虑肯定否定词，可以直接用
 
-class LoaderData:
-    def __init__(self, path):
-        self.db_main_sentences = {}
-        self.db_revelant_sentences = {}
-        self.db_main_list = [] # 用户BM25匹配
-        self.load(path)
+def vector_recall(query):
+    recall_list = BM25Recall(query)
+    # print(recall_list, 'recall_list')
+    vector_recall_list = []
+    query_vector = model.encode(query)
 
-    def load(self, path):
-        db_main_sentences, db_revelant_sentences = load_data(path)
-        self.db_main_sentences = db_main_sentences
-        self.db_revelant_sentences = db_revelant_sentences
-        for (table_name, table_data) in db_main_sentences.items():
-            table_data_cut = list(jieba.cut(table_data))
-            # 去掉不想关的符号
-            table_data_cut = list(filter(lambda x: (x != '-' and x != '，' and x != '：' and x != '_' and x != ' ' and x != ',' and x != '。' and 
-                                  x != '\n'), table_data_cut)) 
-            self.db_main_list.append({
-                "table_name": table_name,
-                "table_data_cut": table_data_cut
+    with open(vector_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+        for line in lines:
+            line_list = line.split(' ')
+            table_names = line_list[0]
+            vector = line_list[1:] # 向量
+            vector = [float(item) for item in vector]
+            cos_sim = util.cos_sim(query_vector, vector)
+            vector_recall_list.append({
+                "table_name": table_names,
+                "cos_sim": cos_sim.item()
             })
+            # print(cos_sim, table_names, 'cos_sim')
+            # tensor([[0.7420]]) bf_offline_payment_form cos_sim
+            # tensor([[0.7174]]) bf_no_order_advance_payment_form_normal_payment cos_sim
+            # tensor([[0.7266]]) bf_no_order_advance_payment_form_payment_apply cos_sim
+            # tensor([[0.7288]]) bf_no_order_advance_payment_form_write_off cos_sim
+            # tensor([[0.7858]]) bf_offline_payment_form_advance_back_detail cos_sim
+            # tensor([[0.6673]]) bf_offline_payment_form_auditor cos_sim
+            # tensor([[0.7142]]) bf_offline_payment_form_public_order cos_sim
+            # tensor([[0.7356]]) bf_offline_payment_form_pay_detail cos_sim
 
+        # test = lines[0].split(' ')
+        # print(test[1:])
+    vector_recall_list = sorted(vector_recall_list, key=lambda x:x['cos_sim'], reverse=True)[:5]
+    # print(vector_recall_list, 'vector_recall_list') # 最终得到的5张相似度最高的表，用于大模型生成
 
-def compare():
-    # 加载数据
-    path = './database.json'
-    loaders = LoaderData(path)
-    db_main_sentences = loaders.db_main_sentences
-    db_revelant_sentences = loaders.db_revelant_sentences
-    db_main_list = loaders.db_main_list
-    documents = [db['table_data_cut'] for db in db_main_list]
-    # documents = [
-    #     ["这", "是", "第一个", "文档"],
-    #     ["这", "是", "文档"],
-    #     ["今天", "天气", "真好"]
-    # ]
-    bm25 = BM25(documents)
-    # print(db_main_list[0], 'db_main_list')
-    # print(db_main_sentences, 'db_main_sentences')
-    # 进行文本匹配
-    query = '根据垫款退回-明细中付款单ID等于20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称'
-    query = list(jieba.cut(query))
-    query = list(filter(lambda x: (x != '-' and x != '，' and x != '：' and x != '_' and x != ' ' and x != ',' and x != '。'), query))
-    # print(documents, 'db_document')
-    scores = bm25.get_scores(query)
-    print(scores, 'scores')
-    db_scores = {}
-    for (index, item) in enumerate(db_main_list):
-        db_scores[item['table_name']] = scores[index]
-    # print(db_scores)
-    bm25_recall = sorted(db_scores.items(), key=lambda x: x[1], reverse=True)
-    bm25_recall = bm25_recall[0: k]
-    vector_sentences = [] # 向量数据库向量
-    for (name, score) in bm25_recall:
-        vector_sentences.append(db_main_sentences[name])
-    print(bm25_recall, 'bm25_recall')
-    print(vector_sentences[0])
-    
-    # print(scores)
-    # scores = [get_score(query_cut, item) for item in documents]
-    # for item in db_main_list:
-    #     table_data_cut = item['table_data_cut']
-    #     print()
-    
+    path = 'database.json'
+    db_main_sentences, db_revelant_sentences, db_main_sentences_comment = load_data(path)
 
+    answer_list = []
+    for item in vector_recall_list:
+        table_name = item['table_name']
+        main_info = db_main_sentences.get(table_name, '') + db_revelant_sentences.get(table_name, '')
+        # print(main_info, 'main_info')
+        answer_list.append(main_info)
     
-    # 输出结果
-    # ...
+    answer = ''.join(answer_list)
+
+    respone = getAnswer(query, answer)
+    print(respone)
+        
+
 
 if __name__ == '__main__':
-    compare()
+    query = '根据垫款退回-明细中付款单ID等于20230313001，查找付款单银行卡卡号和垫款退回明细中的客户名称'
+    vector_recall(query)
