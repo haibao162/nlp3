@@ -2,8 +2,8 @@
 from transformers import BertTokenizer, BertModel
 import torch
 
-tokenizer = BertTokenizer.from_pretrained(r"/Users/mac/Documents/bert-base-chinese")
-model = BertModel.from_pretrained(r"/Users/mac/Documents/bert-base-chinese", return_dict=False)
+tokenizer = BertTokenizer.from_pretrained(r"../../../../LLModel/bert-base-chinese")
+model = BertModel.from_pretrained(r"../../../../LLModel/bert-base-chinese", return_dict=False)
 
 string1 = "今天天气怎么样"
 
