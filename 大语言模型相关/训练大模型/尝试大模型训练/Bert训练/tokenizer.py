@@ -7,7 +7,9 @@ model = BertModel.from_pretrained(r"../../../../LLModel/bert-base-chinese", retu
 
 string1 = "今天天气怎么样"
 
-encoding = tokenizer.encode(string1)
+encoding = tokenizer.encode(string1,
+                            padding="max_length",
+                                     max_length=100,)
 print(encoding, 'encode')
 decoding = tokenizer.decode(encoding)
 print(decoding, 'decoding')
